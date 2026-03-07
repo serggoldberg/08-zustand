@@ -3,9 +3,36 @@ import { QueryClient } from '@tanstack/react-query';
 
 import NotesClient from './Notes.client';
 import { fetchNotes } from '@/lib/api';
+import { Metadata } from 'next';
 
 interface NotesPageProps {
   params: Promise<{ slug: string[] }>;
+}
+
+export async function generateMetadata({
+  params,
+}: NotesPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const tag = slug[0];
+  return {
+    title: `Note: ${tag}`,
+    description: `Notes filtered by tag: ${tag}`,
+    openGraph: {
+      title: `Note: ${tag}`,
+      description: `Notes filtered by tag: ${tag}`,
+      url: `https://notehub.com/notes/${tag}`,
+      siteName: 'NoteHub',
+      images: [
+        {
+          url: 'https://ac.goit.global/fullstack/react/og-meta.jpg',
+          width: 1200,
+          height: 630,
+          alt: `Notes filtered by tag: ${tag}`,
+        },
+      ],
+      type: 'website',
+    },
+  };
 }
 
 export default async function NotesPage({ params }: NotesPageProps) {
